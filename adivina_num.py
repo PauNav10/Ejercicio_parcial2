@@ -1,49 +1,60 @@
 # Importamos el módulo 'random' para generar números aleatorios
 import random
 
+# Diccionario con las configuraciones por nivel: (rango_maximo, vidas)
+DIFICULTADES = {
+    "1": ("Fácil (1-50)", 50, 10),
+    "2": ("Medio (1-100)", 100, 7),
+    "3": ("Difícil (1-200)", 200, 5)
+}
+
+def seleccionar_dificultad():
+    """Permite al jugador elegir la dificultad antes de iniciar."""
+    print("Selecciona un nivel de dificultad:")
+    for clave, (nombre, _, vidas) in DIFICULTADES.items():
+        print(f"[{clave}] {nombre} - {vidas} vidas")
+    
+    while True:
+        opcion = input("Opción (1/2/3): ").strip()
+        if opcion in DIFICULTADES:
+            _, rango_max, vidas = DIFICULTADES[opcion]
+            return rango_max, vidas
+        print("Opción inválida. Intenta de nuevo.")
+
 def jugar():
-    # Genera un número entero aleatorio entre 1 y 100 (ambos inclusive)
-    numero_secreto = random.randint(1, 100)
+    print("=== ¡Bienvenido a 'Adivina el número'! ===")
+    rango_max, vidas_restantes = seleccionar_dificultad()
     
-    # Contador para registrar cuántas veces prueba el jugador
-    intentos = 0
-    
-    # Bandera booleana para controlar el estado del bucle del juego
-    adivinado = False
+    numero_secreto = random.randint(1, rango_max)
+    intentos_realizados = 0
 
-    # Mensajes iniciales de bienvenida e instrucciones
-    print("¡Bienvenido a 'Adivina el número'!")
-    print("He elegido un número entre 1 y 100. ¿Puedes descubrir cuál es?")
+    print(f"\nHe elegido un número entre 1 y {rango_max}. Tienes {vidas_restantes} intentos.")
 
-    # El bucle se ejecutará indefinidamente hasta que 'adivinado' sea True
-    while not adivinado:
-        # Solicitamos la entrada del usuario por consola (siempre se recibe como texto/str)
-        entrada = input("\nIngresa tu intento: ")
+    # El juego continúa mientras queden vidas
+    while vidas_restantes > 0:
+        print(f"\nVidas restantes: {vidas_restantes}")
+        entrada = input("Ingresa tu intento: ")
 
-        # Validamos que la cadena contenga únicamente dígitos numéricos
-        # Esto previene errores en tiempo de ejecución si el usuario escribe letras o símbolos
-        if not entrada.isdigit():
-            print("Por favor, ingresa solo números enteros.")
-            # 'continue' salta el resto del código y regresa al inicio del bucle
+        # Manejo de excepciones para evitar que el programa truene con texto inválido
+        try:
+            intento = int(entrada)
+        except ValueError:
+            print("Entrada no válida: por favor escribe un número entero.")
             continue
 
-        # Convertimos la entrada validada de texto (str) a número entero (int)
-        intento = int(entrada)
-        
-        # Sumamos 1 al contador tras validar un intento correcto
-        intentos += 1
+        intentos_realizados += 1
+        vidas_restantes -= 1
 
-        # Comparamos el intento del usuario con el número secreto
         if intento < numero_secreto:
             print("Más alto...")
         elif intento > numero_secreto:
             print("Más bajo...")
         else:
-            # Si no es menor ni mayor, el usuario acertó
-            adivinado = True
-            # Mostramos el mensaje final interpolando las variables con un f-string
-            print(f"¡Felicidades! Acertaste el número {numero_secreto} en {intentos} intentos.")
+            print(f"\n ¡Victoria! Acertaste el {numero_secreto} en {intentos_realizados} intentos.")
+            return
 
-# Comprobamos si el script se está ejecutando directamente como programa principal
+    # Si se agotan las vidas
+    print(f"\n💀 Fin del juego. Te quedaste sin intentos. El número era el {numero_secreto}.")
+
 if __name__ == "__main__":
     jugar()
