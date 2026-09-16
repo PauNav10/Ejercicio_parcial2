@@ -74,3 +74,33 @@ def jugar():
 # Punto de entrada estándar para ejecutar el script directamente desde la consola
 if __name__ == "__main__":
     jugar()
+
+# Aporte de Alonzo
+# adivina_num.py - Juego con contador de intentos y validación
+import random
+
+def jugar():
+    numero_secreto = random.randint(1, 100)
+    intentos = 0
+    print("=== ¡Bienvenido al juego de Adivina el Número! ===")
+    print("He pensado un número entre 1 y 100.")
+
+    while True:
+        entrada = input("Introduce tu intento: ").strip()
+        if not entrada.isdigit():
+            print("Por favor, ingresa un número entero válido.")
+            continue
+        
+        intento = int(entrada)
+        intentos += 1
+
+        if intento < numero_secreto:
+            print("Demasiado bajo. Intenta de nuevo.")
+        elif intento > numero_secreto:
+            print("Demasiado alto. Intenta de nuevo.")
+        else:
+            print(f"¡Felicidades! Adivinaste el número en {intentos} intentos.")
+            break
+
+if __name__ == "__main__":
+    jugar()
